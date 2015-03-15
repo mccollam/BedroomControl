@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Light Control</title>
+
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/custom.css" rel="stylesheet">
+	
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+	<script>
+		// Unfortunately, there doesn't seem to be a way to query the
+		// current color and brightness of a bulb, so we will have to
+		// just remember what everything is set to here.  This means
+		// that two different browsers accessing the lights will get
+		// out of sync and that things like brightness controls will
+		// have unexpected effects in this case.  This could be solved
+		// by keeping the state on the server, but that has its own
+		// ugliness and I'm just not going to fool with it.
+		var bright=100;
+		
+		function handleButton(btn) {
+			if (btn == 'brightUp') {
+				bright = bright + 25;
+				if (bright > 100)
+					bright = 100;
+			}
+			if (btn == 'brightDown') {
+				bright = bright - 25;
+				if (bright < 0)
+					bright = 0;
+			}
+			
+			var url = "cmd.php?btn=" + btn + "&bright=" + bright;
+			
+			var xmlHttp = new XMLHttpRequest();
+			xmlHttp.open("GET", url, false);
+			xmlHttp.send(null);
+		}
+		function getTime() {
+			var d = new Date();
+			var h = d.getHours();
+			var m = d.getMinutes();
+			var D = d.getDate();
+			var M = d.getMonth();
+			var Y = d.getFullYear();
+			h = format(h);
+			m = format(m);
+			M = monthname(M);
+			document.getElementById('time').innerHTML = h + ":" + m;
+			document.getElementById('date').innerHTML = D + " " + M + " " + Y;
+			var t = setTimeout(function(){getTime()},5000);
+		}
+
+		function format(n) {
+			if (n < 10) {n = "0" + n};  // add zero in front of numbers < 10
+			return n;
+		}
+		
+		function monthname(n) {
+			switch(n) {
+				case 0:
+					return "January";
+					break;
+				case 1:
+					return "February";
+					break
+				case 2:
+					return "March";
+					break;
+				case 3:
+					return "April";
+					break;
+				case 4:
+					return "May";
+					break;
+				case 5:
+					return "June";
+					break;
+				case 6:
+					return "July";
+					break;
+				case 7:
+					return "August";
+					break;
+				case 8:
+					return "September";
+					break;
+				case 9:
+					return "October";
+					break;
+				case 10:
+					return "November";
+					break;
+				case 11:
+					return "December";
+					break;
+				default:
+					return "Unknown";
+					break;
+			}
+		}
+	</script>
+  </head>
+  <body onload="getTime();"> <!-- TODO: Refresh for weather -->
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+    
+	<div class="jumbotron">
+		<div class="container">
+			<div class="row text-center" id="rowtime">
+				<strong><h1 id="time" style="font-size: 400%"></h1></strong>
+				<h3 id="date"></h3>
+			</div>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="row text-center"><h6>Lighting</h6></div>
+		<div class="row" id="lightcontrols">
+			<div class="column col-xs-2"><!--gutter--></div>
+			<div class="column col-xs-2">
+				<div class="row">
+					<button class="btn btn-lg" onClick="handleButton('on');"><span class="glyphicon glyphicon-star"></span></button>
+				</div>
+				<div class="row"><br /></div>
+				<div class="row"><br /></div>
+				<div class="row">
+					<button class="btn btn-lg" onClick="handleButton('off');"><span class="glyphicon glyphicon-star-empty"></span></button>
+				</div>
+			</div>
+			<div class="column col-xs-4 text-center">
+				<div class="row"><br /></div>
+				<div class="row">
+					<button class="btn" onClick="handleButton('cloud');"><span class="glyphicon glyphicon-cloud"></span></button>
+					<button class="btn" onClick="handleButton('martini');"><span class="glyphicon glyphicon-glass"></span></button>
+				</div>
+				<div class="row"><br /></div>
+				<div class="row">
+					<button class="btn" onClick="handleButton('water');"><span class="glyphicon glyphicon-tint"></span></button>
+					<button class="btn" onClick="handleButton('fire');"><span class="glyphicon glyphicon-fire"></span></button>
+					<button class="btn" onClick="handleButton('sun');"><span class="glyphicon glyphicon-certificate"></span></button>
+				</div>
+			</div>
+			<div class="column col-xs-2 text-right">
+				<div class="row">
+					<button class="btn btn-lg" onClick="handleButton('brightUp');"><span class="glyphicon glyphicon-chevron-up"></span></button>
+				</div>
+				<div class="row"><br /></div>
+				<div class="row"><br /></div>
+				<div class="row">
+					<button class="btn btn-lg" onClick="handleButton('brightDown');"><span class="glyphicon glyphicon-chevron-down"></span></button>
+				</div>
+			</div>
+			<div class="column col-xs-2"><!--gutter--></div>
+		</div>
+		<div class="row"><div class="column col-xs-2"></div><div class="column col-xs-8"><hr /></div><div class="column col-xs-2"></div></div>
+		<div class="row text-center"><h6>Devices</h6></div>
+		<div class="row" id="x10controls">
+			<div class="column col-xs-2"><!--gutter--></div>
+			<!-- Media player -->
+			<div class="column col-xs-2 text-right">
+				<span class="glyphicon glyphicon-film"></span>
+			</div>
+			<div class="column col-xs-2">
+				<div class="row">
+					<button class="btn"><span class="glyphicon glyphicon-star"></span></button>
+				</div>
+				<div class="row"><br /></div>
+				<div class="row">
+					<button class="btn"><span class="glyphicon glyphicon-star-empty"></span></button>
+				</div>
+			</div>
+			<!-- Nightlight -->
+			<div class="column col-xs-2 text-right">
+				<div class="row">
+					<button class="btn"><span class="glyphicon glyphicon-star"></span></button>
+				</div>
+				<div class="row"><br /></div>
+				<div class="row">
+					<button class="btn"><span class="glyphicon glyphicon-star-empty"></span></button>
+				</div>
+			</div>
+			<div class="column col-xs-2 text-left">
+				<span class="glyphicon glyphicon-unchecked"></span>
+			</div>
+			<div class="column col-xs-2"><!--gutter--></div>
+		</div>
+	</div>
+
+	<footer class="footer" id="weather">
+		<div class="container">
+			<!--
+			<iframe id="forecast_embed" type="text/html" frameborder="0" height="245" width="100%" src="http://forecast.io/embed/#lat=42.3625&lon=-71.1136&name=Cambridgeport"> </iframe>
+			-->
+		</div>
+	</footer>
+    
+  </body>
+</html>
